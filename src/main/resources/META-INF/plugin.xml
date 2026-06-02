@@ -31,6 +31,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h3>1.1.1</h3>
+        <ul>
+            <li>Fixed: the <b>Build failure</b> sound now plays for failed builds that the
+                IDE also reports as &quot;aborted&quot;.</li>
+            <li>Added troubleshooting logs (in idea.log) for the build/test &rarr; sound path.</li>
+        </ul>
         <h3>1.1.0</h3>
         <ul>
             <li>Renamed the settings page to <b>Custom Sound Alert</b> (was &quot;SoundBuild&quot;).</li>

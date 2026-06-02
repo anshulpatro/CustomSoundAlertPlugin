@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
+## [1.1.1] - 2026-06-02
+
+### Fixed
+- Build-failure detection: a failed build that the platform also flags as
+  *aborted* is now correctly treated as a failure (errors are checked before
+  the aborted flag), so the **Build failure** sound plays.
+
+### Added
+- Informational logging on the build/test → notifier → player path (in
+  `idea.log`) to make "why didn't my sound play?" easy to diagnose.
+
 ## [1.1.0] - 2026-06-02
 
 ### Added
@@ -47,7 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.0...v1.0.1

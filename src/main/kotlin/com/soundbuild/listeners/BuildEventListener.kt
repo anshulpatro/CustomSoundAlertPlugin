@@ -1,5 +1,6 @@
 package com.soundbuild.listeners
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.task.ProjectTaskListener
 import com.intellij.task.ProjectTaskManager
 import com.soundbuild.model.SoundEvent
@@ -9,20 +10,26 @@ import com.soundbuild.services.SoundNotifier
  * Detects build completion via the modern [ProjectTaskListener] API.
  *
  * [ProjectTaskListener] is the supported, non-deprecated way to observe the
- * outcome of "Build", "Rebuild" and "Make" actions. It is fired for both the
- * built-in JPS builder and Gradle/Maven delegated builds, so a single listener
- * covers IntelliJ IDEA and Android Studio alike.
+ * outcome of "Build", "Rebuild" and "Make" actions, including Gradle-delegated
+ * builds in Android Studio and IntelliJ IDEA.
  *
  * Registered on the project message bus through `<projectListeners>` in
  * plugin.xml.
  */
 class BuildEventListener : ProjectTaskListener {
 
-    override fun finished(result: ProjectTaskManager.Result) {
-        // A cancelled build is neither a success nor a failure.
-        if (result.isAborted) return
+    private val log = logger<BuildEventListener>()
 
-        val event = if (result.hasErrors()) SoundEvent.BUILD_FAILURE else SoundEvent.BUILD_SUCCESS
-        SoundNotifier.play(event)
+    override fun finished(result: ProjectTaskManager.Result) {
+        val hasErrors = result.hasErrors()
+        log.info("Build finished: hasErrors=$hasErrors, isAborted=${result.isAborted}")
+
+        // Check errors first: a failed build can also report as aborted, and a
+        // build with errors is unambiguously a failure regardless.
+        when {
+            hasErrors -> SoundNotifier.play(SoundEvent.BUILD_FAILURE)
+            result.isAborted -> Unit // genuinely cancelled — neither success nor failure
+            else -> SoundNotifier.play(SoundEvent.BUILD_SUCCESS)
+        }
     }
 }

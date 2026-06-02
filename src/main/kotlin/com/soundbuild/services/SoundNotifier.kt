@@ -1,5 +1,6 @@
 package com.soundbuild.services
 
+import com.intellij.openapi.diagnostic.logger
 import com.soundbuild.model.SoundEvent
 import com.soundbuild.settings.SoundSettingsState
 
@@ -12,13 +13,17 @@ import com.soundbuild.settings.SoundSettingsState
  */
 object SoundNotifier {
 
+    private val log = logger<SoundNotifier>()
+
     /**
      * Plays the sound configured for [event], honouring the global enable flag
      * and volume. Does nothing when the plugin is disabled or no sound is set.
      */
     fun play(event: SoundEvent) {
         val settings = SoundSettingsState.getInstance()
+        val path = settings.pathFor(event)
+        log.info("SoundNotifier.play(event=$event): enabled=${settings.enabled}, path='$path', volume=${settings.volume}")
         if (!settings.enabled) return
-        SoundPlayerService.getInstance().play(settings.pathFor(event), settings.volume)
+        SoundPlayerService.getInstance().play(path, settings.volume)
     }
 }

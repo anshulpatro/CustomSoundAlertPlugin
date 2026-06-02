@@ -50,9 +50,10 @@ class SoundPlayerService @TestOnly @NonInjectable internal constructor(
      */
     fun play(path: String?, volumePercent: Int) {
         if (path.isNullOrBlank()) {
-            log.debug("No sound configured for this event; skipping playback")
+            log.info("No sound configured for this event; skipping playback")
             return
         }
+        log.info("Scheduling playback: '$path' at volume $volumePercent")
         try {
             executor.execute { playBlocking(path, volumePercent) }
         } catch (e: RejectedExecutionException) {
@@ -64,7 +65,7 @@ class SoundPlayerService @TestOnly @NonInjectable internal constructor(
     private fun playBlocking(path: String, volumePercent: Int) {
         when (val result = AudioSupport.play(path, volumePercent)) {
             is PlaybackResult.Success ->
-                log.debug("Played sound: $path")
+                log.info("Played sound: $path")
             is PlaybackResult.Failure ->
                 log.warn("Sound playback failed [${result.error}]: ${result.message}", result.cause)
         }
