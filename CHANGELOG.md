@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
+## [1.0.2] - 2026-06-02
+
+### Fixed
+- The **Settings → Tools → SoundBuild** page now registers and appears. The
+  `<extensions>` element used the wrong attribute (`defaultExtensionPointName`
+  instead of `defaultExtensionNs`), which left the namespace empty so the
+  `applicationConfigurable` extension was never resolved.
+
 ## [1.0.1] - 2026-06-02
 
 ### Fixed
@@ -29,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/releases/tag/v1.0.0

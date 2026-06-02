@@ -30,6 +30,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h3>1.0.2</h3>
+        <ul>
+            <li>Fixed: the <b>Settings &rarr; Tools &rarr; SoundBuild</b> page now appears.
+                (The extensions namespace attribute was wrong, so the settings page was never registered.)</li>
+        </ul>
         <h3>1.0.1</h3>
         <ul>
             <li>Compatibility: removed the upper IDE bound so the plugin installs on
@@ -47,7 +52,7 @@
     <!-- NOTE: SoundPlayerService and SoundSettingsState are "light services"
          declared with the @Service annotation, so they are intentionally NOT
          registered here. -->
-    <extensions defaultExtensionPointName="com.intellij">
+    <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable
             parentId="tools"
             id="com.soundbuild.settings.SoundSettingsConfigurable"
