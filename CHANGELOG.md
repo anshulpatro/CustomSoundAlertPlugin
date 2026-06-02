@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
-## [1.3.0] - 2026-06-02
+## [1.3.1] - 2026-06-04
 
 ### Added
 - **Built-in default sound for success events.** A bundled success clip
@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - All four events now have a built-in default (previously only failures did), so
   success builds/tests are audible without any configuration.
+- Gradle detection now plays the success/failure sound on **every Gradle build
+  and project-sync result** (Android Studio runs both through the Gradle
+  external-system, not the JPS build pipeline). The notifier debounces so a
+  single action sounds once.
 
 ## [1.2.0] - 2026-06-02
 
@@ -100,8 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.3.0...HEAD
-[1.3.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.2.0...v1.3.0
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.2.0...v1.3.1
 [1.2.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.1...v1.1.2

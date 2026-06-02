@@ -15,21 +15,23 @@ import com.soundbuild.services.SoundNotifier
  * This is what Android Studio (and IntelliJ IDEA with Gradle) actually uses to
  * run builds and import/sync the project — those operations do NOT go through
  * the JPS-oriented [com.intellij.task.ProjectTaskListener], which is why a
- * Gradle build/sync failure would otherwise go unnoticed.
+ * Gradle build/sync result would otherwise go unnoticed.
  *
  * We implement [ExternalSystemTaskNotificationListener] directly (rather than
  * the deprecated `…ListenerAdapter`, whose constructor is scheduled for
  * removal). Only success/failure carry logic; the remaining members — which are
  * `abstract` on older platforms and `default` on newer ones — are no-ops.
  *
- * Mapping:
- *  - `EXECUTE_TASK`    success/failure -> build success / build failure
- *  - `RESOLVE_PROJECT` failure         -> build failure (a broken build script
- *                                          or sync error means the build is broken)
+ * Mapping (both Gradle build tasks and project syncs):
+ *  - `EXECUTE_TASK` / `RESOLVE_PROJECT` success -> build success
+ *  - `EXECUTE_TASK` / `RESOLVE_PROJECT` failure -> build failure
+ *
+ * Every successful Gradle build/sync sounds. [SoundNotifier] debounces, so a
+ * single action that triggers near-simultaneous events plays once, and it never
+ * double-plays with [BuildEventListener].
  *
  * Registered via the `com.intellij.externalSystemTaskNotificationListener`
- * extension point. [SoundNotifier] debounces so this never double-plays with
- * [BuildEventListener].
+ * extension point.
  */
 class GradleBuildListener : ExternalSystemTaskNotificationListener {
 
@@ -37,7 +39,9 @@ class GradleBuildListener : ExternalSystemTaskNotificationListener {
 
     override fun onSuccess(id: ExternalSystemTaskId) {
         log.info("Gradle task success: type=${id.type}")
-        if (id.type == ExternalSystemTaskType.EXECUTE_TASK) {
+        if (id.type == ExternalSystemTaskType.EXECUTE_TASK ||
+            id.type == ExternalSystemTaskType.RESOLVE_PROJECT
+        ) {
             SoundNotifier.play(SoundEvent.BUILD_SUCCESS)
         }
     }

@@ -5,6 +5,7 @@ import com.soundbuild.model.PlaybackResult
 import javazoom.spi.mpeg.sampled.convert.MpegFormatConversionProvider
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader
 import java.io.BufferedInputStream
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -108,9 +109,14 @@ object AudioSupport {
             )
         }
         return playFrom(resourcePath, extension, volumePercent) {
-            val raw = AudioSupport.javaClass.getResourceAsStream(resourcePath)
-                ?: throw IOException("Bundled sound not found on classpath: $resourcePath")
-            openBaseStream(BufferedInputStream(raw), extension)
+            // Read the whole clip into memory and decode from a ByteArrayInputStream.
+            // Bundled sounds are tiny, and this gives unlimited mark/reset support,
+            // which the MP3 reader needs (a plain BufferedInputStream can fail its
+            // probe with "Resetting to invalid mark").
+            val bytes = (AudioSupport.javaClass.getResourceAsStream(resourcePath)
+                ?: throw IOException("Bundled sound not found on classpath: $resourcePath"))
+                .use { it.readBytes() }
+            openBaseStream(ByteArrayInputStream(bytes), extension)
         }
     }
 

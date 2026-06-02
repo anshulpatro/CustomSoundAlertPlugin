@@ -14,7 +14,7 @@ enum class SoundEvent(
     val defaultResource: String? = null,
 ) {
     BUILD_SUCCESS("Build success", "/sounds/success.mp3"),
-    BUILD_FAILURE("Build failure", "/sounds/mario_death_song.mp3"),
+    BUILD_FAILURE("Build failure", "/sounds/failure.mp3"),
     TEST_SUCCESS("Test success", "/sounds/success.mp3"),
-    TEST_FAILURE("Test failure", "/sounds/mario_death_song.mp3"),
+    TEST_FAILURE("Test failure", "/sounds/failure.mp3"),
 }
