@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
+## [1.3.0] - 2026-06-02
+
+### Added
+- **Built-in default sound for success events.** A bundled success clip
+  (`sounds/success.mp3`) now plays on build success and test success out of the
+  box, until the user picks their own file.
+
+### Changed
+- All four events now have a built-in default (previously only failures did), so
+  success builds/tests are audible without any configuration.
+
 ## [1.2.0] - 2026-06-02
 
 ### Added
@@ -89,7 +100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.1...v1.1.2

@@ -2,9 +2,11 @@ package com.soundbuild.util
 
 import com.soundbuild.model.PlaybackError
 import com.soundbuild.model.PlaybackResult
+import com.soundbuild.model.SoundEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -97,5 +99,17 @@ class AudioSupportTest {
         val result = AudioSupport.playResource("/sounds/note.txt", 50)
         val failure = assertInstanceOf(PlaybackResult.Failure::class.java, result)
         assertEquals(PlaybackError.UNSUPPORTED_FORMAT, failure.error)
+    }
+
+    @Test
+    fun `every declared default sound is bundled on the classpath`() {
+        val defaults = SoundEvent.entries.mapNotNull { it.defaultResource }.distinct()
+        assertTrue(defaults.isNotEmpty(), "expected at least one bundled default")
+        defaults.forEach { resource ->
+            assertTrue(AudioSupport.isSupportedExtension(resource), "unsupported default: $resource")
+            val stream = AudioSupport.javaClass.getResourceAsStream(resource)
+            assertNotNull(stream, "bundled sound missing from classpath: $resource")
+            stream?.close()
+        }
     }
 }
