@@ -14,7 +14,7 @@ class SoundSettingsConfigurable : Configurable {
 
     private var component: SoundSettingsComponent? = null
 
-    override fun getDisplayName(): String = "SoundBuild"
+    override fun getDisplayName(): String = "Custom Sound Alert"
 
     override fun createComponent(): JComponent {
         val created = SoundSettingsComponent()

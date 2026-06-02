@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
+## [1.1.0] - 2026-06-02
+
+### Added
+- A **Tools → Custom Sound Alert** menu (menu bar) with a **Settings…** action
+  and an **Enable Sound Alerts** toggle.
+
+### Changed
+- Renamed the settings page from **SoundBuild** to **Custom Sound Alert**
+  (under Settings → Tools).
+
 ## [1.0.2] - 2026-06-02
 
 ### Fixed
@@ -37,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/releases/tag/v1.0.0

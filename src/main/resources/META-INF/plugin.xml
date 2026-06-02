@@ -22,7 +22,8 @@
             <li><b>All tests passed</b> &amp; <b>one or more tests failed</b></li>
         </ul>
         <p>
-            Configure everything under <b>Settings &rarr; Tools &rarr; SoundBuild</b>:
+            Configure everything under <b>Settings &rarr; Tools &rarr; Custom Sound Alert</b>
+            (or the <b>Tools &rarr; Custom Sound Alert</b> menu):
             pick a <code>.wav</code> or <code>.mp3</code> file per event, set a global volume,
             and preview each sound with the <i>Test</i> button. Sounds play asynchronously
             and never block the IDE.
@@ -30,6 +31,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h3>1.1.0</h3>
+        <ul>
+            <li>Renamed the settings page to <b>Custom Sound Alert</b> (was &quot;SoundBuild&quot;).</li>
+            <li>Added a <b>Tools &rarr; Custom Sound Alert</b> menu with quick <i>Settings…</i> access
+                and an <i>Enable Sound Alerts</i> toggle.</li>
+        </ul>
         <h3>1.0.2</h3>
         <ul>
             <li>Fixed: the <b>Settings &rarr; Tools &rarr; SoundBuild</b> page now appears.
@@ -57,8 +64,26 @@
             parentId="tools"
             id="com.soundbuild.settings.SoundSettingsConfigurable"
             instance="com.soundbuild.settings.SoundSettingsConfigurable"
-            displayName="SoundBuild"/>
+            displayName="Custom Sound Alert"/>
     </extensions>
+
+    <!-- Tools menu group (menu bar), similar to other tool plugins. -->
+    <actions>
+        <group id="com.soundbuild.ToolsMenuGroup"
+               text="Custom Sound Alert"
+               description="Custom Sound Alert"
+               popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="com.soundbuild.OpenSoundSettings"
+                    class="com.soundbuild.actions.OpenSoundSettingsAction"
+                    text="Settings…"
+                    description="Open Custom Sound Alert settings"/>
+            <action id="com.soundbuild.ToggleSoundAlerts"
+                    class="com.soundbuild.actions.ToggleSoundAlertsAction"
+                    text="Enable Sound Alerts"
+                    description="Turn sound notifications on or off"/>
+        </group>
+    </actions>
 
     <!-- Event detection via the project message bus. -->
     <projectListeners>

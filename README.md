@@ -4,7 +4,7 @@ A plugin for **Android Studio** and **IntelliJ IDEA** that plays a sound of your
 choosing when a build or test run finishes — so you can look away and still know
 what happened.
 
-![Settings → Tools → SoundBuild](docs/settings.png)
+![Settings → Tools → Custom Sound Alert](docs/settings.png)
 
 ---
 
@@ -17,7 +17,7 @@ what happened.
 | **Test success**  | A test run finishes and every test passed |
 | **Test failure**  | A test run finishes with one or more failures/errors |
 
-- Per-event sound file, configured under **Settings → Tools → SoundBuild**.
+- Per-event sound file, configured under **Settings → Tools → Custom Sound Alert**.
 - **WAV** supported natively; **MP3** supported via a bundled decoder.
 - A **Test** button beside every field to preview the sound (using the current,
   unsaved volume).
@@ -44,7 +44,7 @@ what happened.
 
 ## Usage
 
-1. Open **Settings → Tools → SoundBuild**.
+1. Open **Settings → Tools → Custom Sound Alert**.
 2. Tick **Enable Custom Sound Alert**.
 3. For each event, click **Browse…**, pick a `.wav` or `.mp3` file, and use
    **Test** to preview it.
