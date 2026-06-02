@@ -1,0 +1,62 @@
+<idea-plugin>
+    <id>in.anshulpatro.custom-sound-alert</id>
+    <name>Custom Sound Alert</name>
+
+    <vendor email="anshulpatro@gmail.com" url="https://github.com/anshulpatro/custom-sound-alert">
+        Anshul Patro
+    </vendor>
+
+    <!-- Minimal platform dependency: everything we use is part of the shared
+         platform, so the plugin works in both IntelliJ IDEA and Android Studio.
+         The since/until build range is patched in by build.gradle.kts. -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <description><![CDATA[
+        <h2>Custom Sound Alert</h2>
+        <p>
+            Assign your own audio notifications to common IDE events so you can step away
+            from the screen and still know what just happened.
+        </p>
+        <ul>
+            <li><b>Build success</b> &amp; <b>build failure</b></li>
+            <li><b>All tests passed</b> &amp; <b>one or more tests failed</b></li>
+        </ul>
+        <p>
+            Configure everything under <b>Settings &rarr; Tools &rarr; SoundBuild</b>:
+            pick a <code>.wav</code> or <code>.mp3</code> file per event, set a global volume,
+            and preview each sound with the <i>Test</i> button. Sounds play asynchronously
+            and never block the IDE.
+        </p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <h3>1.0.0</h3>
+        <ul>
+            <li>Initial release.</li>
+            <li>Custom sounds for build success/failure and test success/failure.</li>
+            <li>WAV and MP3 support, per-event Test button, and global volume control.</li>
+            <li>Settings persisted across IDE restarts.</li>
+        </ul>
+    ]]></change-notes>
+
+    <!-- NOTE: SoundPlayerService and SoundSettingsState are "light services"
+         declared with the @Service annotation, so they are intentionally NOT
+         registered here. -->
+    <extensions defaultExtensionPointName="com.intellij">
+        <applicationConfigurable
+            parentId="tools"
+            id="com.soundbuild.settings.SoundSettingsConfigurable"
+            instance="com.soundbuild.settings.SoundSettingsConfigurable"
+            displayName="SoundBuild"/>
+    </extensions>
+
+    <!-- Event detection via the project message bus. -->
+    <projectListeners>
+        <listener
+            class="com.soundbuild.listeners.BuildEventListener"
+            topic="com.intellij.task.ProjectTaskListener"/>
+        <listener
+            class="com.soundbuild.listeners.TestEventListener"
+            topic="com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener"/>
+    </projectListeners>
+</idea-plugin>

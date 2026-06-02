@@ -1,0 +1,36 @@
+# ---- Gradle ----------------------------------------------------------------
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+
+# Kotlin compiler/daemon working directory (Kotlin 1.9+/2.0)
+.kotlin/
+
+# ---- IntelliJ Platform Gradle Plugin --------------------------------------
+.intellijPlatform/
+
+# ---- IDE: IntelliJ IDEA / Android Studio ----------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Android Studio / local Gradle config (paths, SDK location, secrets)
+local.properties
+
+# ---- Plugin signing & publishing secrets ----------------------------------
+certificate/
+*.pem
+*.crt
+*.p12
+
+# ---- Logs & temp -----------------------------------------------------------
+*.log
+*.hprof
+
+# ---- OS --------------------------------------------------------------------
+.DS_Store
+Thumbs.db
