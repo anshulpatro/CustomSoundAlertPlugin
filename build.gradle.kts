@@ -76,7 +76,12 @@ intellijPlatform {
         version = providers.gradleProperty("pluginVersion")
         ideaVersion {
             sinceBuild = "241"
-            untilBuild = "252.*"
+            // No upper bound. The plugin relies only on long-stable platform
+            // APIs (verified compatible against 241 & 243), so it should load in
+            // current and future IDEs — including Android Studio 2025.3 "Panda"
+            // (platform build 253) and later. Re-introduce a bound only if a
+            // future release is found to break compatibility.
+            untilBuild = provider { null }
         }
     }
 
