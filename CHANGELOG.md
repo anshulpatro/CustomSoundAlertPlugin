@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
+## [1.1.2] - 2026-06-02
+
+### Fixed
+- **Build sounds now fire in Android Studio / Gradle projects.** Builds and
+  project syncs run through the Gradle external-system, not the JPS build
+  pipeline that `ProjectTaskListener` observes, so failures (including broken
+  `build.gradle` / sync-configuration errors) previously played nothing.
+
+### Added
+- `GradleBuildListener` on the external-system task events:
+  `EXECUTE_TASK` success/failure → build success/failure, and a failed
+  `RESOLVE_PROJECT` (sync/configuration error) → build failure.
+- Debounce in `SoundNotifier` so the JPS and Gradle listeners can't double-play
+  the same result.
+
 ## [1.1.1] - 2026-06-02
 
 ### Fixed
@@ -58,7 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.0.1...v1.0.2

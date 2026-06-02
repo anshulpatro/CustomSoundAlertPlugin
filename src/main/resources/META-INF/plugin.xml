@@ -31,6 +31,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        <h3>1.1.2</h3>
+        <ul>
+            <li>Fixed: build sounds now fire in <b>Android Studio / Gradle</b> projects — including
+                failed builds and broken <code>build.gradle</code> / sync errors — by listening to
+                Gradle's external-system events (not just the JPS build pipeline).</li>
+        </ul>
         <h3>1.1.1</h3>
         <ul>
             <li>Fixed: the <b>Build failure</b> sound now plays for failed builds that the
@@ -71,6 +77,10 @@
             id="com.soundbuild.settings.SoundSettingsConfigurable"
             instance="com.soundbuild.settings.SoundSettingsConfigurable"
             displayName="Custom Sound Alert"/>
+
+        <!-- Catches Gradle build & project-sync outcomes (Android Studio / Gradle). -->
+        <externalSystemTaskNotificationListener
+            implementation="com.soundbuild.listeners.GradleBuildListener"/>
     </extensions>
 
     <!-- Tools menu group (menu bar), similar to other tool plugins. -->
