@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
+## [1.2.0] - 2026-06-02
+
+### Added
+- **Built-in default sound for failure events.** A bundled sound now plays on
+  build failure and test failure out of the box, until the user picks their own
+  file. Success events remain silent unless configured.
+- `SoundPlayerService.playResource(...)` and `AudioSupport.playResource(...)`
+  to play sounds bundled on the classpath; the **Test** button previews the
+  default when a field is left blank.
+
 ## [1.1.3] - 2026-06-02
 
 ### Changed
@@ -79,7 +89,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.0...v1.1.1

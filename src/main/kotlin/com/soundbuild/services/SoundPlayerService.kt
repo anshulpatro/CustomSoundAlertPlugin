@@ -44,30 +44,41 @@ class SoundPlayerService @TestOnly @NonInjectable internal constructor(
     )
 
     /**
-     * Schedules [path] to be played asynchronously at the given volume. Returns
-     * immediately; the UI thread is never blocked. A blank/`null` path is a
-     * no-op (the user simply has not configured a sound for this event).
+     * Schedules a user-chosen file [path] to be played asynchronously at the
+     * given volume. Returns immediately; the UI thread is never blocked. A
+     * blank/`null` path is a no-op.
      */
     fun play(path: String?, volumePercent: Int) {
         if (path.isNullOrBlank()) {
             log.info("No sound configured for this event; skipping playback")
             return
         }
-        log.info("Scheduling playback: '$path' at volume $volumePercent")
+        log.info("Scheduling playback (file): '$path' at volume $volumePercent")
+        submit(path) { AudioSupport.play(path, volumePercent) }
+    }
+
+    /**
+     * Schedules a sound bundled in the plugin jar (classpath [resourcePath]) to
+     * be played asynchronously — used for the built-in default sounds.
+     */
+    fun playResource(resourcePath: String, volumePercent: Int) {
+        log.info("Scheduling playback (bundled): '$resourcePath' at volume $volumePercent")
+        submit(resourcePath) { AudioSupport.playResource(resourcePath, volumePercent) }
+    }
+
+    private fun submit(label: String, task: () -> PlaybackResult) {
         try {
-            executor.execute { playBlocking(path, volumePercent) }
+            executor.execute {
+                when (val result = task()) {
+                    is PlaybackResult.Success ->
+                        log.info("Played sound: $label")
+                    is PlaybackResult.Failure ->
+                        log.warn("Sound playback failed [${result.error}] for '$label': ${result.message}", result.cause)
+                }
+            }
         } catch (e: RejectedExecutionException) {
             // Happens only if the IDE is shutting down — safe to ignore.
             log.debug("Sound player is shutting down; dropping playback request", e)
-        }
-    }
-
-    private fun playBlocking(path: String, volumePercent: Int) {
-        when (val result = AudioSupport.play(path, volumePercent)) {
-            is PlaybackResult.Success ->
-                log.info("Played sound: $path")
-            is PlaybackResult.Failure ->
-                log.warn("Sound playback failed [${result.error}]: ${result.message}", result.cause)
         }
     }
 

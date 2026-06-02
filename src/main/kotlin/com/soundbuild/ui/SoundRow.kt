@@ -18,12 +18,15 @@ import javax.swing.JButton
  *        Test button previews exactly what the user is configuring.
  */
 class SoundRow(
-    @Suppress("unused") private val event: SoundEvent,
+    private val event: SoundEvent,
     private val volumeProvider: () -> Int,
 ) {
 
     val pathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton().apply {
-        textField.toolTipText = "Path to a .wav or .mp3 file"
+        textField.toolTipText = buildString {
+            append("Path to a .wav or .mp3 file")
+            if (event.defaultResource != null) append(" — leave blank to use the built-in default")
+        }
     }
 
     val testButton: JButton = JButton("Test")
@@ -33,7 +36,13 @@ class SoundRow(
         // pre-select the currently configured file.
         pathField.addActionListener { chooseFile() }
         testButton.addActionListener {
-            SoundPlayerService.getInstance().play(path.ifEmpty { null }, volumeProvider())
+            val player = SoundPlayerService.getInstance()
+            val chosen = path.ifEmpty { null }
+            when {
+                chosen != null -> player.play(chosen, volumeProvider())
+                // Field empty: preview the bundled default if this event has one.
+                event.defaultResource != null -> player.playResource(event.defaultResource, volumeProvider())
+            }
         }
     }
 

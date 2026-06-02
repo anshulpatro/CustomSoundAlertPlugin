@@ -39,9 +39,30 @@ object SoundNotifier {
         }
 
         val settings = SoundSettingsState.getInstance()
+        if (!settings.enabled) {
+            log.info("SoundNotifier.play(event=$event): plugin disabled; skipping")
+            return
+        }
+
         val path = settings.pathFor(event)
-        log.info("SoundNotifier.play(event=$event): enabled=${settings.enabled}, path='$path', volume=${settings.volume}")
-        if (!settings.enabled) return
-        SoundPlayerService.getInstance().play(path, settings.volume)
+        val player = SoundPlayerService.getInstance()
+        val volume = settings.volume
+
+        if (path.isNotBlank()) {
+            // User-chosen file takes precedence.
+            log.info("SoundNotifier.play(event=$event): user file='$path', volume=$volume")
+            player.play(path, volume)
+            return
+        }
+
+        // No user file: fall back to the bundled default sound, if this event
+        // has one (failure events do; success events don't).
+        val default = event.defaultResource
+        if (default != null) {
+            log.info("SoundNotifier.play(event=$event): built-in default '$default', volume=$volume")
+            player.playResource(default, volume)
+        } else {
+            log.info("SoundNotifier.play(event=$event): no sound configured and no default")
+        }
     }
 }

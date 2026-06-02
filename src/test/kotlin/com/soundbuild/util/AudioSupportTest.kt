@@ -84,4 +84,18 @@ class AudioSupportTest {
         val result = AudioSupport.play(file.absolutePath, 50)
         assertInstanceOf(PlaybackResult.Failure::class.java, result)
     }
+
+    @Test
+    fun `playResource fails gracefully for a missing bundled resource`() {
+        val result = AudioSupport.playResource("/sounds/does-not-exist.mp3", 50)
+        val failure = assertInstanceOf(PlaybackResult.Failure::class.java, result)
+        assertEquals(PlaybackError.DECODE_FAILED, failure.error)
+    }
+
+    @Test
+    fun `playResource rejects unsupported bundled formats`() {
+        val result = AudioSupport.playResource("/sounds/note.txt", 50)
+        val failure = assertInstanceOf(PlaybackResult.Failure::class.java, result)
+        assertEquals(PlaybackError.UNSUPPORTED_FORMAT, failure.error)
+    }
 }

@@ -4,8 +4,10 @@ import com.soundbuild.model.PlaybackError
 import com.soundbuild.model.PlaybackResult
 import javazoom.spi.mpeg.sampled.convert.MpegFormatConversionProvider
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
@@ -22,6 +24,11 @@ import kotlin.math.log10
  * dependencies), which keeps the actual decoding/playback logic unit-testable
  * and keeps [com.soundbuild.services.SoundPlayerService] focused on threading
  * and lifecycle concerns only (single responsibility).
+ *
+ * Two sources are supported:
+ *  - [play] — a user-chosen file on disk.
+ *  - [playResource] — a sound bundled inside the plugin jar (the built-in
+ *    defaults), read from the classpath.
  *
  * Format strategy:
  *  - WAV/AIFF/AU are decoded by the JDK's built-in providers.
@@ -77,21 +84,51 @@ object AudioSupport {
     }
 
     /**
-     * Decodes and plays the given file synchronously on the calling thread.
-     *
-     * This method never throws: every failure mode is converted into a
-     * [PlaybackResult.Failure] so the caller can simply log it.
+     * Decodes and plays a file from disk, synchronously on the calling thread.
+     * Never throws — every failure becomes a [PlaybackResult.Failure].
      */
     fun play(path: String?, volumePercent: Int): PlaybackResult {
         validate(path)?.let { return PlaybackResult.Failure(it, describe(it, path)) }
-
         val file = File(path!!)
         val extension = extensionOf(file.name)
+        return playFrom(file.name, extension, volumePercent) { openBaseStream(file, extension) }
+    }
 
+    /**
+     * Decodes and plays a sound bundled in the plugin jar (classpath
+     * [resourcePath], e.g. `/sounds/default-error.mp3`), synchronously on the
+     * calling thread. Never throws.
+     */
+    fun playResource(resourcePath: String, volumePercent: Int): PlaybackResult {
+        val extension = extensionOf(resourcePath)
+        if (!isSupportedExtension(resourcePath)) {
+            return PlaybackResult.Failure(
+                PlaybackError.UNSUPPORTED_FORMAT,
+                "Unsupported bundled sound: $resourcePath",
+            )
+        }
+        return playFrom(resourcePath, extension, volumePercent) {
+            val raw = AudioSupport.javaClass.getResourceAsStream(resourcePath)
+                ?: throw IOException("Bundled sound not found on classpath: $resourcePath")
+            openBaseStream(BufferedInputStream(raw), extension)
+        }
+    }
+
+    /**
+     * Core playback loop shared by [play] and [playResource]. [openBase] is
+     * invoked inside the try-block so that I/O errors while opening are mapped
+     * to the same [PlaybackResult.Failure] values as errors during playback.
+     */
+    private fun playFrom(
+        sourceName: String,
+        extension: String,
+        volumePercent: Int,
+        openBase: () -> AudioInputStream,
+    ): PlaybackResult {
         var stream: AudioInputStream? = null
         var line: SourceDataLine? = null
         return try {
-            stream = openPcmStream(file, extension)
+            stream = toSignedPcm(openBase(), extension)
             val format = stream.format
             line = AudioSystem.getSourceDataLine(format)
             line.open(format)
@@ -111,14 +148,14 @@ object AudioSupport {
         } catch (e: UnsupportedAudioFileException) {
             PlaybackResult.Failure(
                 PlaybackError.UNSUPPORTED_FORMAT,
-                "Unsupported or corrupted audio file: ${file.name}",
+                "Unsupported or corrupted audio: $sourceName",
                 e,
             )
         } catch (e: IOException) {
-            PlaybackResult.Failure(PlaybackError.DECODE_FAILED, "Failed to read audio file: ${file.name}", e)
+            PlaybackResult.Failure(PlaybackError.DECODE_FAILED, "Failed to read audio: $sourceName", e)
         } catch (e: RuntimeException) {
             // mp3spi/JLayer can raise unchecked exceptions on malformed input.
-            PlaybackResult.Failure(PlaybackError.DECODE_FAILED, "Unexpected error playing ${file.name}", e)
+            PlaybackResult.Failure(PlaybackError.DECODE_FAILED, "Unexpected error playing $sourceName", e)
         } finally {
             runCatching { line?.stop() }
             runCatching { line?.close() }
@@ -126,23 +163,23 @@ object AudioSupport {
         }
     }
 
-    /**
-     * Opens an [AudioInputStream] of signed 16-bit PCM data ready to be written
-     * to a [SourceDataLine], decoding MP3 on the way when necessary.
-     */
-    private fun openPcmStream(file: File, extension: String): AudioInputStream {
-        val baseStream: AudioInputStream = if (extension == "mp3") {
-            MpegAudioFileReader().getAudioInputStream(file)
-        } else {
-            AudioSystem.getAudioInputStream(file)
-        }
+    private fun openBaseStream(file: File, extension: String): AudioInputStream =
+        if (extension == "mp3") MpegAudioFileReader().getAudioInputStream(file)
+        else AudioSystem.getAudioInputStream(file)
 
+    private fun openBaseStream(input: InputStream, extension: String): AudioInputStream {
+        // The MP3/WAV readers probe the stream and need mark/reset support.
+        val markable = if (input.markSupported()) input else BufferedInputStream(input)
+        return if (extension == "mp3") MpegAudioFileReader().getAudioInputStream(markable)
+        else AudioSystem.getAudioInputStream(markable)
+    }
+
+    /** Converts a decoded base stream to signed 16-bit PCM ready for a line. */
+    private fun toSignedPcm(baseStream: AudioInputStream, extension: String): AudioInputStream {
         val base = baseStream.format
-        // WAV is usually already signed PCM and can be streamed as-is.
         if (extension != "mp3" && base.encoding == AudioFormat.Encoding.PCM_SIGNED) {
             return baseStream
         }
-
         val target = AudioFormat(
             AudioFormat.Encoding.PCM_SIGNED,
             base.sampleRate,
