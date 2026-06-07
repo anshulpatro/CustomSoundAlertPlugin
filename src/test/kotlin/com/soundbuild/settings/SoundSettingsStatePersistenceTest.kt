@@ -60,4 +60,21 @@ class SoundSettingsStatePersistenceTest {
         state.setPath(SoundEvent.TEST_SUCCESS, "  /sounds/ok.wav  ")
         assertEquals("/sounds/ok.wav", state.pathFor(SoundEvent.TEST_SUCCESS))
     }
+
+    @Test
+    fun `per-event defaults to failures-only and round-trips`() {
+        val original = SoundSettingsState()
+        // Default: failures on, successes off.
+        assertEquals(false, original.isEnabled(SoundEvent.BUILD_SUCCESS))
+        assertEquals(true, original.isEnabled(SoundEvent.BUILD_FAILURE))
+        assertEquals(false, original.isEnabled(SoundEvent.TEST_SUCCESS))
+        assertEquals(true, original.isEnabled(SoundEvent.TEST_FAILURE))
+
+        // Flip to non-defaults and confirm they survive a save/load round-trip.
+        original.setEnabled(SoundEvent.BUILD_SUCCESS, true)
+        original.setEnabled(SoundEvent.BUILD_FAILURE, false)
+        val restored = SoundSettingsState().apply { loadState(original.getState().copy()) }
+        assertEquals(true, restored.isEnabled(SoundEvent.BUILD_SUCCESS))
+        assertEquals(false, restored.isEnabled(SoundEvent.BUILD_FAILURE))
+    }
 }

@@ -43,6 +43,10 @@ object SoundNotifier {
             log.info("SoundNotifier.play(event=$event): plugin disabled; skipping")
             return
         }
+        if (!settings.isEnabled(event)) {
+            log.info("SoundNotifier.play(event=$event): event disabled; skipping")
+            return
+        }
 
         val path = settings.pathFor(event)
         val player = SoundPlayerService.getInstance()

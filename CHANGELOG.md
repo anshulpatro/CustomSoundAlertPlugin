@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - _Nothing yet._
 
+## [1.4.0] - 2026-06-04
+
+### Added
+- **Per-event on/off toggles.** Each event (build success, build failure, test
+  success, test failure) now has its own checkbox on the settings screen, so you
+  can silence just one — e.g. keep failure sounds but mute success — without
+  disabling the whole plugin. When an event is unchecked, its path field and
+  Test button are disabled and no sound (not even the built-in default) plays
+  for it.
+
+### Changed
+- **Default is now failures-only.** Out of the box, only build failure and test
+  failure play; success events are off by default (opt in per event) to avoid a
+  sound on every green build.
+
 ## [1.3.1] - 2026-06-04
 
 ### Added
@@ -104,7 +119,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV (native) and MP3 (bundled decoder) playback.
 - Settings persisted across IDE restarts via `PersistentStateComponent`.
 
-[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.2.0...v1.3.1
 [1.2.0]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/anshulpatro/CustomSoundAlertPlugin/compare/v1.1.2...v1.1.3

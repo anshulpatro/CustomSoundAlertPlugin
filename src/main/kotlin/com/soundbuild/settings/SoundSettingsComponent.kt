@@ -40,9 +40,13 @@ class SoundSettingsComponent {
         }
 
         group("Sounds") {
+            row {
+                label("Untick an event to silence just that one. Leave a path blank to use the built-in sound.")
+            }
             for (event in SoundEvent.entries) {
                 val soundRow = rows.getValue(event)
-                row("${event.displayLabel}:") {
+                row {
+                    cell(soundRow.enabledCheckBox)
                     cell(soundRow.pathField)
                         .align(AlignX.FILL)
                         .resizableColumn()
@@ -63,7 +67,10 @@ class SoundSettingsComponent {
         val s = settings
         if (enabledCheckBox.isSelected != s.enabled) return true
         if (volumeSpinner.number != s.volume) return true
-        return SoundEvent.entries.any { rows.getValue(it).path != s.pathFor(it) }
+        return SoundEvent.entries.any { event ->
+            val row = rows.getValue(event)
+            row.path != s.pathFor(event) || row.soundEnabled != s.isEnabled(event)
+        }
     }
 
     fun apply() {
@@ -71,7 +78,9 @@ class SoundSettingsComponent {
         s.enabled = enabledCheckBox.isSelected
         s.volume = volumeSpinner.number
         SoundEvent.entries.forEach { event ->
-            s.setPath(event, rows.getValue(event).path)
+            val row = rows.getValue(event)
+            s.setEnabled(event, row.soundEnabled)
+            s.setPath(event, row.path)
         }
     }
 
@@ -80,7 +89,9 @@ class SoundSettingsComponent {
         enabledCheckBox.isSelected = s.enabled
         volumeSpinner.number = s.volume
         SoundEvent.entries.forEach { event ->
-            rows.getValue(event).path = s.pathFor(event)
+            val row = rows.getValue(event)
+            row.soundEnabled = s.isEnabled(event)
+            row.path = s.pathFor(event)
         }
     }
 }

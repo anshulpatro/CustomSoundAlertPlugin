@@ -28,6 +28,13 @@ class SoundSettingsState : PersistentStateComponent<SoundSettingsState.State> {
     data class State(
         var enabled: Boolean = true,
         var volume: Int = 80,
+        // Per-event on/off. By default only failures sound (knowing something
+        // broke is useful); success sounds are opt-in to avoid noise on every
+        // green build. Users can toggle any of these on the settings screen.
+        var buildSuccessEnabled: Boolean = false,
+        var buildFailureEnabled: Boolean = true,
+        var testSuccessEnabled: Boolean = false,
+        var testFailureEnabled: Boolean = true,
         var buildSuccessPath: String = "",
         var buildFailurePath: String = "",
         var testSuccessPath: String = "",
@@ -55,6 +62,23 @@ class SoundSettingsState : PersistentStateComponent<SoundSettingsState.State> {
         set(value) {
             state.volume = value.coerceIn(0, 100)
         }
+
+    /** Whether sounds are enabled for [event] (independent of the master switch). */
+    fun isEnabled(event: SoundEvent): Boolean = when (event) {
+        SoundEvent.BUILD_SUCCESS -> state.buildSuccessEnabled
+        SoundEvent.BUILD_FAILURE -> state.buildFailureEnabled
+        SoundEvent.TEST_SUCCESS -> state.testSuccessEnabled
+        SoundEvent.TEST_FAILURE -> state.testFailureEnabled
+    }
+
+    fun setEnabled(event: SoundEvent, value: Boolean) {
+        when (event) {
+            SoundEvent.BUILD_SUCCESS -> state.buildSuccessEnabled = value
+            SoundEvent.BUILD_FAILURE -> state.buildFailureEnabled = value
+            SoundEvent.TEST_SUCCESS -> state.testSuccessEnabled = value
+            SoundEvent.TEST_FAILURE -> state.testFailureEnabled = value
+        }
+    }
 
     fun pathFor(event: SoundEvent): String = when (event) {
         SoundEvent.BUILD_SUCCESS -> state.buildSuccessPath
